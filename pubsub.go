@@ -2,7 +2,6 @@ package pubsub
 
 import (
 	"errors"
-	"fmt"
 	"sync"
 )
 
@@ -92,15 +91,12 @@ func (q *Pubsub) Publish(topic string, message MessageHandler) error {
 	q.mu.Lock()
 	defer q.mu.Unlock()
 	q.message[topic] <- message
-	fmt.Println(q.MessageLength(topic))
 
 	return nil
 }
 
 func (q *Pubsub) Listen() error {
-	fmt.Println(len(q.consumer))
 	for topic, consumer := range q.consumer {
-		fmt.Println(consumer, topic)
 		for i := 0; i < q.maxWorkerpool; i++ {
 			go consumer.dispatcher(q.message[topic])
 		}
